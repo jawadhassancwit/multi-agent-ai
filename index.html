@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Multi-Agent AI Chat</title>
+    <title>Multi-Agent AI</title>
 </head>
 <body>
+    <h1>Multi-Agent AI Chat</h1>
 
-<h2>AI Chat</h2>
+    <input type="text" id="prompt" placeholder="Enter prompt" style="width:300px;">
+    <button onclick="sendPrompt()">Send</button>
 
-<input type="text" id="prompt" placeholder="Enter your request" style="width:300px;">
-<button onclick="sendPrompt()">Send</button>
+    <h3>Response:</h3>
+    <pre id="response"></pre>
 
-<pre id="response"></pre>
+    <script>
+        async function sendPrompt() {
+            const userInput = document.getElementById("prompt").value;
 
-<script>
-async function sendPrompt() {
-    let prompt = document.getElementById("prompt").value;
+            const response = await fetch("https://web-production-7687b.up.railway.app/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ prompt: userInput })
+            });
 
-    let res = await fetch("http://127.0.0.1:8000/chat", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ prompt: prompt })
-    });
-
-    let data = await res.json();
-
-    document.getElementById("response").innerText = JSON.stringify(data, null, 2);
-}
-</script>
-
+            const data = await response.json();
+            document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+        }
+    </script>
 </body>
 </html>
