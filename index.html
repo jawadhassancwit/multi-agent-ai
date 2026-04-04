@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Agent AI Chat</title>
+</head>
+<body>
+
+<h2>AI Chat</h2>
+
+<input type="text" id="prompt" placeholder="Enter your request" style="width:300px;">
+<button onclick="sendPrompt()">Send</button>
+
+<pre id="response"></pre>
+
+<script>
+async function sendPrompt() {
+    let prompt = document.getElementById("prompt").value;
+
+    let res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt: prompt })
+    });
+
+    let data = await res.json();
+
+    document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
