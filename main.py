@@ -12,4 +12,20 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.post("/chat")
 def chat(prompt: str):
     result = orchestrator.handle_request(prompt)
-    return {"response": result}
+
+    # If agent returned image
+    if isinstance(result, dict) and "image" in result:
+        return {
+            "response": {
+                "type": "image",
+                "image": result["image"]
+            }
+        }
+
+    # Otherwise text response
+    return {
+        "response": {
+            "type": "text",
+            "content": str(result)
+        }
+    }

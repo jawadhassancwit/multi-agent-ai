@@ -99,11 +99,11 @@ async function sendMessage() {
     let imageUrl = null;
 
     if (data.response) {
-        if (data.response.image) {
+        if (data.response.type === "image") {
             imageUrl = data.response.image;
-        } else {
-            let keys = Object.keys(data.response);
-            output = data.response[keys[0]];
+        } 
+        else if (data.response.type === "text") {
+            output = data.response.content;
         }
     }
 
@@ -120,6 +120,8 @@ async function sendMessage() {
     else {
         // Clean text
         output = output.replace(/\n/g, "<br>");
+        output = output.replace(/```html/g, "");
+        output = output.replace(/```/g, "");
         output = output.replace(/###\s?/g, "");
         output = output.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
         output = output.replace(/---/g, "<br>");

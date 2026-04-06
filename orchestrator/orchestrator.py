@@ -26,15 +26,14 @@ class Orchestrator:
 
         response = {}
 
-        # Long memory search
+    # Long memory search
         past_info = self.long_memory.search(prompt)
         if past_info:
             response["memory_search"] = past_info
 
-        # Planning
+    # Planning
         steps = self.planner.plan(prompt)
 
-        # ensure steps is always a list
         if isinstance(steps, str):
             steps = [steps]
 
@@ -62,9 +61,22 @@ class Orchestrator:
                 self.file_tool.save_to_file("output.txt", str(response))
                 response["tool"] = "Saved to output.txt"
 
-        # Save last output to memory
-        if response:
-            last_value = list(response.values())[-1]
-            self.memory.add("assistant", str(last_value))
+    # Save last output to memory
+    if response:
+        last_value = list(response.values())[-1]
+        self.memory.add("assistant", str(last_value))
 
-        return response
+    # ✅ FINAL RETURN FIX
+    if "image" in response:
+        return {"image": response["image"]}
+
+    elif "write" in response:
+        return response["write"]
+
+    elif "code" in response:
+        return response["code"]
+
+    elif "research" in response:
+        return response["research"]
+
+    return "No response generated"
