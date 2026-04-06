@@ -1,22 +1,15 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from orchestrator.orchestrator import Orchestrator
 
-def main():
-    orchestrator = Orchestrator()
+app = FastAPI()
+orchestrator = Orchestrator()
 
-    while True:
-        user_prompt = input("\nEnter your request (type 'exit' to quit): ")
+# Serve images and static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-        if user_prompt.lower() == "exit":
-            break
-
-        result = orchestrator.handle_request(user_prompt)
-
-        print("\n=== FINAL OUTPUT ===\n")
-        print(result)
-
-        print("\n=== MEMORY ===\n")
-        print(orchestrator.memory.get_history())
-
-
-if __name__ == "__main__":
-    main()
+# Chat API
+@app.post("/chat")
+def chat(prompt: str):
+    result = orchestrator.handle_request(prompt)
+    return {"response": result}

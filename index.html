@@ -3,30 +3,149 @@
 <head>
     <title>Multi-Agent AI</title>
 </head>
-<body>
-    <h1>Multi-Agent AI Chat</h1>
 
-    <input type="text" id="prompt" placeholder="Enter prompt" style="width:300px;">
-    <button onclick="sendPrompt()">Send</button>
+<body style="
+    font-family: Arial;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+">
 
-    <h3>Response:</h3>
-    <pre id="response"></pre>
+    <!-- Header -->
+    <h2 style="
+        background:#222;
+        color:white;
+        padding:10px;
+        margin:0;
+        text-align:center;
+    ">
+        Multi-Agent AI Chat
+    </h2>
 
-    <script>
-        async function sendPrompt() {
-            const userInput = document.getElementById("prompt").value;
+    <!-- Chat Area -->
+    <div id="chat" style="
+        flex:1;
+        padding:10px;
+        overflow-y:auto;
+        background:#f0f0f0;
+    ">
+    </div>
 
-            const response = await fetch("https://web-production-7687b.up.railway.app/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ prompt: userInput })
-            });
+    <!-- Input Area -->
+    <div style="
+        display:flex;
+        padding:10px;
+        background:#ddd;
+    ">
+        <input 
+            type="text" 
+            id="prompt" 
+            placeholder="Enter prompt"
+            style="
+                flex:1;
+                padding:10px;
+                font-size:16px;
+            "
+        >
+        <button 
+            onclick="sendMessage()"
+            style="
+                padding:10px;
+                margin-left:5px;
+            "
+        >
+            Send
+        </button>
+    </div>
 
-            const data = await response.json();
-            document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+<script>
+async function sendMessage() {
+    let input = document.getElementById("prompt");
+    let prompt = input.value;
+
+    if (prompt.trim() === "") return;
+
+    let chat = document.getElementById("chat");
+
+    // User message bubble
+    chat.innerHTML += `
+        <div style="text-align:right; margin:8px;">
+            <span style="
+                background:#0084ff;
+                color:white;
+                padding:8px;
+                border-radius:8px;
+                display:inline-block;
+                max-width:60%;
+            ">
+                ${prompt}
+            </span>
+        </div>
+    `;
+
+    input.value = "";
+
+    // API call
+    let response = await fetch(
+        "https://web-production-7687b.up.railway.app/chat?prompt=" + prompt,
+        { method: "POST" }
+    );
+
+    let data = await response.json();
+
+    let output = "";
+    let imageUrl = null;
+
+    // Extract clean response text from JSON
+    if (data.response) {
+        if (data.response.image) {
+            imageUrl = data.response.image;
+        } else {
+            let keys = Object.keys(data.response);
+            output = data.response[keys[0]];
         }
-    </script>
-</body>
-</html>
+    }
+
+    // If image response
+    if (imageUrl) {
+        chat.innerHTML += `
+            <div style="text-align:left; margin:8px;">
+                <img src="${imageUrl}" style="max-width:300px; border-radius:10px;">
+            </div>
+        `;
+    } 
+    else {
+        // Clean text
+        output = output.replace(/\n/g, "<br>");
+        output = output.replace(/###\s?/g, "");
+        output = output.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+        output = output.replace(/---/g, "<br>");
+        output = output.replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
+
+        chat.innerHTML += `
+            <div style="text-align:left; margin:8px;">
+                <span style="
+                    background:#e5e5ea;
+                    padding:8px;
+                    border-radius:8px;
+                    display:inline-block;
+                    max-width:60%;
+                ">
+                    ${output}
+                </span>
+            </div>
+        `;
+    }
+
+    // Auto scroll
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// Enter key send
+document.getElementById("prompt").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+</script>

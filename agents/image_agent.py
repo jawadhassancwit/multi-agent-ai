@@ -27,8 +27,14 @@ class ImageAgent:
         response = requests.post(self.api_url, headers=headers, json=data)
 
         if response.status_code == 200:
-            with open("generated_image.png", "wb") as f:
+            # Absolute path to static folder
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            image_path = os.path.join(base_dir, "static", "generated_image.png")
+
+            with open(image_path, "wb") as f:
                 f.write(response.content)
-            return "Image saved as generated_image.png"
+
+            image_url = "https://web-production-7687b.up.railway.app/static/generated_image.png"
+            return image_url
         else:
-            return response.text        
+            return response.text             

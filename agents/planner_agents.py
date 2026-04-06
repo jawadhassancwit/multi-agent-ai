@@ -5,8 +5,9 @@ class PlannerAgent:
 
         if any(word in prompt for word in ["research", "explain", "what is", "history", "war"]):
             steps.append("research")
+            steps.append("writer")   # 🔥 automatic writer after research
 
-        if any(word in prompt for word in ["write", "blog", "article"]):
+        elif any(word in prompt for word in ["write", "blog", "article"]):
             steps.append("writer")
 
         if any(word in prompt for word in ["code", "python", "program"]):
@@ -19,3 +20,5 @@ class PlannerAgent:
             steps.append("save")
 
         return steps
+
+        print("Planner Steps:", steps)
