@@ -2,6 +2,12 @@ import os
 import requests
 import uuid
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
 
 class ImageAgent:
     def __init__(self):
