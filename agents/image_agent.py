@@ -1,11 +1,6 @@
-import requests
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
-CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+import requests
+import uuid
 
 class ImageAgent:
     def __init__(self):
@@ -22,21 +17,22 @@ class ImageAgent:
         response = requests.post(self.api_url, headers=headers, json=data)
 
         if response.status_code == 200:
-            # Ensure static folder exists
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             static_dir = os.path.join(base_dir, "static")
 
             if not os.path.exists(static_dir):
                 os.makedirs(static_dir)
 
-            image_path = os.path.join(static_dir, "generated_image.png")
+            # UNIQUE filename
+            filename = f"generated_{uuid.uuid4().hex}.png"
+            image_path = os.path.join(static_dir, filename)
 
             with open(image_path, "wb") as f:
                 f.write(response.content)
 
             print("Image saved at:", image_path)
 
-            return "https://web-production-7687b.up.railway.app/static/generated_image.png"
+            return f"https://web-production-7687b.up.railway.app/static/{filename}"
         else:
             print("Image API error:", response.text)
             return "Image generation failed" 
