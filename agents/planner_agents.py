@@ -1,24 +1,15 @@
 class PlannerAgent:
     def plan(self, prompt):
-        prompt = prompt.lower()
-        steps = []
+    prompt = prompt.lower()
 
-        if any(word in prompt for word in ["research", "explain", "what is", "history", "war"]):
-            steps.append("research")
-            steps.append("writer")   # 🔥 automatic writer after research
+    if "image" in prompt or "picture" in prompt or "draw" in prompt or "generate image" in prompt:
+        return "image"
 
-        elif any(word in prompt for word in ["write", "blog", "article"]):
-            steps.append("writer")
+    elif "code" in prompt or "program" in prompt:
+        return "code"
 
-        if any(word in prompt for word in ["code", "python", "program"]):
-            steps.append("code")
+    elif "research" in prompt or "information" in prompt:
+        return "research"
 
-        if any(word in prompt for word in ["image", "draw", "picture", "generate"]):
-            steps.append("image")
-
-        if "save" in prompt:
-            steps.append("save")
-
-        return steps
-
-        print("Planner Steps:", steps)
+    else:
+        return "write"

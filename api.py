@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from orchestrator.orchestrator import Orchestrator
@@ -6,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 orchestrator = Orchestrator()
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,8 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static files (images)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Absolute path for static folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 def home():
