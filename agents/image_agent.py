@@ -1,6 +1,7 @@
 import os
 import requests
 import uuid
+import time
 
 class ImageAgent:
     def __init__(self):
@@ -23,7 +24,6 @@ class ImageAgent:
             if not os.path.exists(static_dir):
                 os.makedirs(static_dir)
 
-            # UNIQUE filename
             filename = f"generated_{uuid.uuid4().hex}.png"
             image_path = os.path.join(static_dir, filename)
 
@@ -32,7 +32,7 @@ class ImageAgent:
 
             print("Image saved at:", image_path)
 
-            return f"https://web-production-7687b.up.railway.app/static/{filename}"
+            return f"https://web-production-7687b.up.railway.app/static/{filename}?t={int(time.time())}"
         else:
             print("Image API error:", response.text)
-            return "Image generation failed" 
+            return "Image generation failed"
