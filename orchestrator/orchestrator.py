@@ -25,15 +25,18 @@ class Orchestrator:
         self.memory.add("user", prompt)
 
         response = {}
-        final_output = ""
 
-        # Long memory search
+    # Long memory search
         past_info = self.long_memory.search(prompt)
         if past_info:
             response["memory_search"] = past_info
 
-        # Planning
+    # Planning
         steps = self.planner.plan(prompt)
+
+    # FIX: ensure steps is always a list
+        if isinstance(steps, str):
+            steps = [steps]
 
         for step in steps:
             print("Running:", step)
@@ -42,29 +45,28 @@ class Orchestrator:
                 result = self.research.research(prompt)
                 response["research"] = result
 
-            elif step == "writer":
+            elif step == "write" or step == "writer":
                 research_text = response.get("research", prompt)
                 result = self.writer.write(research_text)
-                response["writer"] = result
-                final_output = result
+                response["write"] = result
 
             elif step == "code":
                 result = self.code.generate_code(prompt)
                 response["code"] = result
-                final_output = result
 
             elif step == "image":
                 result = self.image.generate_image(prompt)
                 response["image"] = result
-                final_output = result
 
             elif step == "save":
                 self.file_tool.save_to_file("output.txt", str(response))
                 response["tool"] = "Saved to output.txt"
 
-        # Save clean output to memory
-        if final_output:
-            self.memory.add("assistant", final_output)
+    # Save last output to memory
+    if response:
+        last_value = list(response.values())[-1]
+        self.memory.add("assistant", str(last_value))
 
-        return final_output    
+    #  FIX: return full response instead of final_output
+    return response    
          
