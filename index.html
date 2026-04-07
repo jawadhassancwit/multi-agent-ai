@@ -117,6 +117,15 @@ async function sendMessage() {
         } 
         else if (data.response.type === "text") {
             output = data.response.content;
+
+            if (typeof output === "string" && output.includes("content")){
+                try{
+                    let fixed = JSON.parse(output.replace(/'/g, '"'));
+                    output = fixed.content || output;
+                } catch (e) {
+                    // ignoring if parsing files
+                }
+            }
         }
     }
 
