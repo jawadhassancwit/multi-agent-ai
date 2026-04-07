@@ -133,13 +133,20 @@ async function sendMessage() {
     else {
         // Clean text
         output = escapeHTML(output);
-        output = output.replace(/\n/g, "<br>");
-        output = output.replace(/```html/g, "");
-        output = output.replace(/```/g, "");
-        output = output.replace(/###\s?/g, "");
-        output = output.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
-        output = output.replace(/---/g, "<br>");
-        output = output.replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
+        output = output
+            .replace(/```html/g, "")
+            .replace(/```/g, "")
+            .replace(/###\s?/g, "")
+            .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+            .replace(/---/g, "")
+            .replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
+
+        output = output.replace(/([A-Z][^\n]+):/g, "<b>$1</b><br>");
+        
+        output = output
+            .split("\n\n")
+            .map(p => `<p style="margin:8px 0; line-height:1.5;">${p.trim()}</p>`)
+            .join("");
 
         chat.innerHTML += `
             <div style="text-align:left; margin:8px;">
