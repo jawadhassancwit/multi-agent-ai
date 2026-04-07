@@ -10,22 +10,12 @@ class WriterAgent(BaseAgent):
             model=WRITER_MODEL
         )
 
-    def clean_text(self, text):
-        text = re.sub(r'#+', '', text)        # remove ###
-        text = re.sub(r'\*+', '', text)       # remove ***
-        text = re.sub(r'-{2,}', '', text)     # remove ---
-        text = re.sub(r'\n\s*\n', '\n', text) # remove extra lines
-        return text.strip()
-
     def write(self, task):
-        result = self.run(task)
-        result = self.clean_text(result)
-        return result     
+        print(" Writer agent executing...")
 
-    def write(self, task):
-        print("🔥 Writer agent running...")
         result = self.run(task)
-        print("writer result:",result)
-        result = self.clean_text(result)
-        return result         
+
+        print(" Writer final output:", result)
+
+        return result        
 
