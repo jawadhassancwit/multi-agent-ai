@@ -133,6 +133,8 @@ async function sendMessage() {
     else {
         // Clean text
         output = escapeHTML(output);
+
+// Remove markdown & junk
         output = output
             .replace(/```html/g, "")
             .replace(/```/g, "")
@@ -141,11 +143,17 @@ async function sendMessage() {
             .replace(/---/g, "")
             .replace(/[\u{1F300}-\u{1FAFF}]/gu, "");
 
-        output = output.replace(/([A-Z][^\n]+):/g, "<b>$1</b><br>");
-        
-        output = output
-            .split("\n\n")
-            .map(p => `<p style="margin:8px 0; line-height:1.5;">${p.trim()}</p>`)
+// 🔥 FIX: normalize line breaks
+        output = output.replace(/\r\n/g, "\n");
+
+// 🔥 FIX: ensure proper paragraph splitting
+        let paragraphs = output.split(/\n\s*\n/);
+
+// 🔥 FIX: clean each paragraph
+        output = paragraphs
+            .map(p => p.trim())
+            .filter(p => p.length > 0)
+            .map(p => `<p style="margin:10px 0; line-height:1.6;">${p}</p>`)
             .join("");
 
         chat.innerHTML += `
