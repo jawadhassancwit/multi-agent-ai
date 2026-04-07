@@ -79,8 +79,7 @@ class Orchestrator:
 
         #  FINAL RETURN (ROBUST FIX)
         if not response:
-            print(" No response generated")
-            return "No response generated"
+            return {"type": "text", "content": "No response generated"}
 
         last_key = list(response.keys())[-1]
         last_value = response[last_key]
@@ -89,7 +88,13 @@ class Orchestrator:
 
         # If image → return dict
         if last_key == "image":
-            return {"image": last_value}
+            return {
+                "type":"image",
+                "image":last_value
+            }
 
         # Otherwise return text
-        return last_value
+        return {
+            "type":"text",
+            "content":str(last_value)
+        }
