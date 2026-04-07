@@ -25,5 +25,7 @@ class WriterAgent(BaseAgent):
     def write(self, task):
         print("🔥 Writer agent running...")
         result = self.run(task)
+        print("writer result:",result)
         result = self.clean_text(result)
         return result         
+
