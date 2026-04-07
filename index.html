@@ -119,6 +119,7 @@ async function sendMessage() {
     } 
     else {
         // Clean text
+        output = escapeHTML(output);
         output = output.replace(/\n/g, "<br>");
         output = output.replace(/```html/g, "");
         output = output.replace(/```/g, "");
