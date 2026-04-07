@@ -10,4 +10,6 @@ class ResearchAgent(BaseAgent):
         )
 
     def research(self, task):
-        return self.run(task)
+        result = self.run(task)
+        result = self.clean_text(result)
+        return result

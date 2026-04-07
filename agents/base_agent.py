@@ -30,6 +30,10 @@ class BaseAgent:
             # Remove thinking
             cleaned_output = re.sub(r"<think>.*?</think>", "", output, flags=re.DOTALL)
 
+# REMOVE markdown blocks
+            cleaned_output = re.sub(r"```[a-zA-Z]*", "", cleaned_output)
+            cleaned_output = cleaned_output.replace("```", "")
+
             return cleaned_output.strip()
 
         except Exception as e:
