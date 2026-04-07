@@ -72,29 +72,32 @@ class Orchestrator:
                 self.file_tool.save_to_file("output.txt", str(response))
                 response["tool"] = "Saved to output.txt"
 
-        #  Save last output to memory
-        if response:
-            last_value = list(response.values())[-1]
-            self.memory.add("assistant", str(last_value))
+    
 
-        #  FINAL RETURN (ROBUST FIX)
+#  FINAL RETURN
         if not response:
             return {"type": "text", "content": "No response generated"}
 
-        last_key = list(response.keys())[-1]
+        last_key = list(response.keys())[-1]    
         last_value = response[last_key]
 
         print(f"FINAL OUTPUT: {last_key} => {last_value}")
 
-        # If image → return dict
+        self.memory.add("assistant", last_value)
+
+# ✅ If image
         if last_key == "image":
             return {
-                "type":"image",
-                "image":last_value
+                "type": "image",
+                "image": last_value
             }
 
-        # Otherwise return text
+# ✅ If already structured (VERY IMPORTANT FIX)
+        if isinstance(last_value, dict) and "content" in last_value:
+            return last_value
+
+# ✅ Otherwise wrap clean text
         return {
-            "type":"text",
+            "type": "text",
             "content": last_value
         }
