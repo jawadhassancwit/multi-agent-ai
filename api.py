@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from orchestrator.orchestrator import Orchestrator
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Request
 
 app = FastAPI()
 orchestrator = Orchestrator()
@@ -25,8 +26,27 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 def home():
     return {"message": "Multi-Agent AI Running"}
 
-@app.get("/chat")
 @app.post("/chat")
-def chat(prompt: str):
+async def chat(request: Request):
+    data = await request.json()
+    prompt = data.get("prompt")
+
+    if not prompt:
+        return {"response": {"type": "text", "content": "No prompt provided"}}
+
     result = orchestrator.handle_request(prompt)
-    return {"response": result}
+
+    if isinstance(result, dict) and "image" in result:
+        return {
+            "response": {
+                "type": "image",
+                "image": result["image"]
+            }
+        }
+
+    return {
+        "response": {
+            "type": "text",
+            "content": str(result)
+        }
+    }
