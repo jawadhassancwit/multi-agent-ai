@@ -45,8 +45,5 @@ async def chat(request: Request):
         }
 
     return {
-        "response": {
-            "type": "text",
-            "content": str(result)
-        }
+        "response": result
     }

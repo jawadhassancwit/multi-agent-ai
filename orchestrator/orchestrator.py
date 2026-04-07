@@ -96,5 +96,5 @@ class Orchestrator:
         # Otherwise return text
         return {
             "type":"text",
-            "content":str(last_value)
+            "content": last_value
         }
